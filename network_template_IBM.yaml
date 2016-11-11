@@ -1,0 +1,574 @@
+adv_net_template:
+  default:
+    network_assignments:
+      fuelweb_admin:
+        ep: br-fw-admin
+      management:
+        ep: br-mgmt
+      private:
+        ep: br-mesh
+      public:
+        ep: br-ex
+      san:
+        ep: br-san
+      storage:
+        ep: br-storage
+    network_scheme:
+      template-ceph-osd:
+        endpoints:
+        - br-fw-admin
+        - br-mgmt
+        - br-san
+        - br-storage
+        roles:
+          admin/pxe: br-fw-admin
+          ceilometer/api: br-mgmt
+          ceph/public: br-san
+          ceph/replication: br-storage
+          cinder/api: br-mgmt
+          fw-admin: br-fw-admin
+          glance/api: br-mgmt
+          heat/api: br-mgmt
+          horizon: br-mgmt
+          ironic/api: br-mgmt
+          keystone/api: br-mgmt
+          management: br-mgmt
+          mgmt/corosync: br-mgmt
+          mgmt/database: br-mgmt
+          mgmt/memcache: br-mgmt
+          mgmt/messaging: br-mgmt
+          mgmt/vip: br-mgmt
+          mongo/db: br-mgmt
+          murano/api: br-mgmt
+          murano/cfapi: br-mgmt
+          neutron/api: br-mgmt
+          nova/api: br-mgmt
+          nova/migration: br-mgmt
+          sahara/api: br-mgmt
+          storage: br-storage
+          swift/api: br-mgmt
+        transformations:
+        - action: add-br
+          name: br-fw-admin
+        - action: add-br
+          name: br-mgmt
+        - action: add-br
+          name: br-san
+        - action: add-br
+          name: br-storage
+        - action: add-br
+          name: br-aux
+        - action: add-port
+          bridge: br-fw-admin
+          name: <% if_ceph_osd_admin %>
+        - action: add-bond
+          bond_properties:
+            lacp_rate: slow
+            mode: 802.3ad
+            xmit_hash_policy: layer2+3
+          bridge: br-aux
+          interface_properties:
+            ethtool:
+              offload:
+                generic-receive-offload: true
+                generic-segmentation-offload: true
+                scatter-gather: true
+                tcp-segmentation-offload: true
+                tx-checksum-ip-generic: true
+                tx-checksumming: true
+                tx-nocache-copy: true
+                tx-scatter-gather: true
+                tx-tcp-ecn-segmentation: true
+                tx-tcp-segmentation: true
+                tx-tcp6-segmentation: true
+                udp-fragmentation-offload: true
+          interfaces:
+          - <% if_ceph_osd_common_0 %>
+          - <% if_ceph_osd_common_1 %>
+          mtu: 9216
+          name: bond0
+        - action: add-port
+          bridge: br-mgmt
+          mtu: 9216
+          name: bond0.<% vlan_common_mgmt %>
+        - action: add-port
+          bridge: br-san
+          mtu: 9216
+          name: bond0.<% vlan_common_san %>
+        - action: add-port
+          bridge: br-storage
+          mtu: 9216
+          name: bond0.<% vlan_common_storage %>
+      template-compute:
+        endpoints:
+        - br-fw-admin
+        - br-mgmt
+        - br-san
+        - br-mesh
+        roles:
+          admin/pxe: br-fw-admin
+          ceilometer/api: br-mgmt
+          ceph/public: br-san
+          cinder/api: br-mgmt
+          fw-admin: br-fw-admin
+          glance/api: br-mgmt
+          heat/api: br-mgmt
+          horizon: br-mgmt
+          ironic/api: br-mgmt
+          keystone/api: br-mgmt
+          management: br-mgmt
+          mgmt/corosync: br-mgmt
+          mgmt/database: br-mgmt
+          mgmt/memcache: br-mgmt
+          mgmt/messaging: br-mgmt
+          mgmt/vip: br-mgmt
+          mongo/db: br-mgmt
+          murano/api: br-mgmt
+          murano/cfapi: br-mgmt
+          neutron/api: br-mgmt
+          neutron/mesh: br-mesh
+          neutron/private: br-mesh
+          nova/api: br-mgmt
+          nova/migration: br-mgmt
+          sahara/api: br-mgmt
+          swift/api: br-mgmt
+        transformations:
+        - action: add-br
+          name: br-fw-admin
+        - action: add-br
+          name: br-mgmt
+        - action: add-br
+          name: br-san
+        - action: add-br
+          name: br-mesh
+        - action: add-br
+          name: br-aux
+        - action: add-port
+          bridge: br-fw-admin
+          name: <% if_compute_admin %>
+        - action: add-bond
+          bond_properties:
+            lacp_rate: slow
+            mode: 802.3ad
+            xmit_hash_policy: layer2+3
+          bridge: br-aux
+          interface_properties:
+            ethtool:
+              offload:
+                generic-receive-offload: true
+                generic-segmentation-offload: true
+                scatter-gather: true
+                tcp-segmentation-offload: true
+                tx-checksum-ip-generic: true
+                tx-checksumming: true
+                tx-nocache-copy: true
+                tx-scatter-gather: true
+                tx-tcp-ecn-segmentation: true
+                tx-tcp-segmentation: true
+                tx-tcp6-segmentation: true
+                udp-fragmentation-offload: true
+          interfaces:
+          - <% if_compute_common_0 %>
+          - <% if_compute_common_1 %>
+          mtu: 9216
+          name: bond0
+        - action: add-port
+          bridge: br-mgmt
+          mtu: 9216
+          name: bond0.<% vlan_common_mgmt %>
+        - action: add-port
+          bridge: br-san
+          mtu: 9216
+          name: bond0.<% vlan_common_san %>
+        - action: add-port
+          bridge: br-mesh
+          mtu: 9216
+          name: bond0.<% vlan_common_private %>
+      template-mongo:
+        endpoints:
+        - br-fw-admin
+        - br-mgmt
+        roles:
+          admin/pxe: br-fw-admin
+          ceilometer/api: br-mgmt
+          ceph/radosgw: br-mgmt
+          cinder/api: br-mgmt
+          fw-admin: br-fw-admin
+          glance/api: br-mgmt
+          heat/api: br-mgmt
+          horizon: br-mgmt
+          ironic/api: br-mgmt
+          keystone/api: br-mgmt
+          management: br-mgmt
+          mgmt/corosync: br-mgmt
+          mgmt/database: br-mgmt
+          mgmt/memcache: br-mgmt
+          mgmt/messaging: br-mgmt
+          mgmt/vip: br-mgmt
+          mongo/db: br-mgmt
+          murano/api: br-mgmt
+          murano/cfapi: br-mgmt
+          neutron/api: br-mgmt
+          nova/api: br-mgmt
+          nova/migration: br-mgmt
+          sahara/api: br-mgmt
+          swift/api: br-mgmt
+        transformations:
+        - action: add-br
+          name: br-fw-admin
+        - action: add-br
+          name: br-mgmt
+        - action: add-port
+          bridge: br-fw-admin
+          name: <% if_mongo_admin %>
+        - action: add-port
+          bridge: br-mgmt
+          mtu: 9216
+          name: <% if_mongo_mgmt %>
+      template-monitoring:
+        endpoints:
+        - br-fw-admin
+        - br-mgmt
+        roles:
+          admin/pxe: br-fw-admin
+          ceilometer/api: br-mgmt
+          ceph/radosgw: br-mgmt
+          cinder/api: br-mgmt
+          elasticsearch: br-mgmt
+          fw-admin: br-fw-admin
+          glance/api: br-mgmt
+          grafana: br-mgmt
+          heat/api: br-mgmt
+          horizon: br-mgmt
+          influxdb_vip: br-mgmt
+          infrastructure_alerting: br-mgmt
+          infrastructure_alerting_ui: br-mgmt
+          ironic/api: br-mgmt
+          keystone/api: br-mgmt
+          kibana: br-mgmt
+          management: br-mgmt
+          mgmt/corosync: br-mgmt
+          mgmt/database: br-mgmt
+          mgmt/memcache: br-mgmt
+          mgmt/messaging: br-mgmt
+          mgmt/vip: br-mgmt
+          mongo/db: br-mgmt
+          murano/api: br-mgmt
+          murano/cfapi: br-mgmt
+          neutron/api: br-mgmt
+          nova/api: br-mgmt
+          nova/migration: br-mgmt
+          sahara/api: br-mgmt
+          swift/api: br-mgmt
+        transformations:
+        - action: add-br
+          name: br-fw-admin
+        - action: add-br
+          name: br-mgmt
+        - action: add-port
+          bridge: br-fw-admin
+          name: <% if_monitoring_admin %>
+        - action: add-port
+          bridge: br-mgmt
+          mtu: 9216
+          name: <% if_monitoring_mgmt %>
+      template-small-controller:
+        endpoints:
+        - br-fw-admin
+        - br-mgmt
+        - br-san
+        - br-mesh
+        - br-ex
+        roles:
+          admin/pxe: br-fw-admin
+          aodh/api: br-mgmt
+          ceilometer/api: br-mgmt
+          ceph/public: br-san
+          ceph/radosgw: br-ex
+          cinder/api: br-mgmt
+          ex: br-ex
+          fw-admin: br-fw-admin
+          glance/api: br-mgmt
+          heat/api: br-mgmt
+          horizon: br-mgmt
+          ironic/api: br-mgmt
+          keystone/api: br-mgmt
+          management: br-mgmt
+          mgmt/corosync: br-mgmt
+          mgmt/database: br-mgmt
+          mgmt/memcache: br-mgmt
+          mgmt/messaging: br-mgmt
+          mgmt/vip: br-mgmt
+          mongo/db: br-mgmt
+          murano/api: br-mgmt
+          murano/cfapi: br-mgmt
+          neutron/api: br-mgmt
+          neutron/floating: br-floating
+          neutron/mesh: br-mesh
+          neutron/private: br-mesh
+          nova/api: br-mgmt
+          nova/migration: br-mgmt
+          public/vip: br-ex
+          sahara/api: br-mgmt
+          swift/api: br-mgmt
+        transformations:
+        - action: add-br
+          name: br-fw-admin
+        - action: add-br
+          name: br-mgmt
+        - action: add-br
+          name: br-san
+        - action: add-br
+          name: br-ex
+        - action: add-br
+          name: br-floating
+          provider: ovs
+        - action: add-br
+          name: br-mesh
+        - action: add-br
+          name: br-aux
+        - action: add-patch
+          bridges:
+          - br-floating
+          - br-ex
+          mtu: 65000
+          provider: ovs
+        - action: add-port
+          bridge: br-fw-admin
+          name: <% if_small_controller_admin %>
+        - action: add-port
+          bridge: br-mgmt
+          mtu: 9216
+          name: <% if_small_controller_mgmt %>
+        - action: add-port
+          bridge: br-san
+          mtu: 9216
+          name: <% if_small_controller_san %>
+        - action: add-port
+          bridge: br-mesh
+          mtu: 9216
+          name: <% if_small_controller_private %>
+        - action: add-port
+          bridge: br-ex
+          mtu: 9216
+          name: <% if_small_controller_public %>
+      template-storage-controller:
+        endpoints:
+        - br-fw-admin
+        - br-mgmt
+        - br-san
+        - br-storage
+        roles:
+          admin/pxe: br-fw-admin
+          ceilometer/api: br-mgmt
+          ceph/public: br-san
+          ceph/radosgw: br-mgmt
+          ceph/replication: br-storage
+          cinder/api: br-mgmt
+          fw-admin: br-fw-admin
+          glance/api: br-mgmt
+          heat/api: br-mgmt
+          horizon: br-mgmt
+          ironic/api: br-mgmt
+          keystone/api: br-mgmt
+          management: br-mgmt
+          mgmt/corosync: br-mgmt
+          mgmt/database: br-mgmt
+          mgmt/memcache: br-mgmt
+          mgmt/messaging: br-mgmt
+          mgmt/vip: br-mgmt
+          mongo/db: br-mgmt
+          murano/api: br-mgmt
+          murano/cfapi: br-mgmt
+          neutron/api: br-mgmt
+          nova/api: br-mgmt
+          nova/migration: br-mgmt
+          rados_gw_management_vip: br-san
+          rados_gw_plublic_vip: br-storage
+          sahara/api: br-mgmt
+          storage: br-storage
+          swift/api: br-mgmt
+          swift/replication: br-storage
+        transformations:
+        - action: add-br
+          name: br-fw-admin
+        - action: add-br
+          name: br-mgmt
+        - action: add-br
+          name: br-san
+        - action: add-br
+          name: br-storage
+        - action: add-port
+          bridge: br-fw-admin
+          name: <% if_storage_controller_admin %>
+        - action: add-port
+          bridge: br-mgmt
+          mtu: 9216
+          name: <% if_storage_controller_mgmt %>
+        - action: add-port
+          bridge: br-san
+          mtu: 9216
+          name: <% if_storage_controller_san %>
+        - action: add-port
+          bridge: br-storage
+          mtu: 9216
+          name: <% if_storage_controller_storage %>
+      template-virt:
+        endpoints:
+        - br-fw-admin
+        - br-mgmt
+        - br-san
+        - br-mesh
+        - br-ex
+        - br-storage
+        roles:
+          admin/pxe: br-fw-admin
+          ceilometer/api: br-mgmt
+          ceph/public: br-san
+          cinder/api: br-mgmt
+          fw-admin: br-fw-admin
+          glance/api: br-mgmt
+          heat/api: br-mgmt
+          horizon: br-mgmt
+          ironic/api: br-mgmt
+          keystone/api: br-mgmt
+          management: br-mgmt
+          mgmt/corosync: br-mgmt
+          mgmt/database: br-mgmt
+          mgmt/memcache: br-mgmt
+          mgmt/messaging: br-mgmt
+          mgmt/vip: br-mgmt
+          mongo/db: br-mgmt
+          murano/api: br-mgmt
+          murano/cfapi: br-mgmt
+          neutron/api: br-mgmt
+          neutron/mesh: br-mesh
+          neutron/private: br-mesh
+          nova/api: br-mgmt
+          nova/migration: br-mgmt
+          sahara/api: br-mgmt
+          swift/api: br-mgmt
+        transformations:
+        - action: add-br
+          name: br-fw-admin
+        - action: add-br
+          name: br-mgmt
+        - action: add-br
+          name: br-san
+        - action: add-br
+          name: br-storage
+        - action: add-br
+          name: br-ex
+        - action: add-br
+          name: br-mesh
+        - action: add-br
+          name: br-aux
+        - action: add-port
+          bridge: br-fw-admin
+          name: <% if_virt_admin %>
+        - action: add-bond
+          bond_properties:
+            lacp_rate: slow
+            mode: 802.3ad
+            xmit_hash_policy: layer2+3
+          bridge: br-aux
+          interface_properties:
+            ethtool:
+              offload:
+                generic-receive-offload: true
+                generic-segmentation-offload: true
+                scatter-gather: true
+                tcp-segmentation-offload: true
+                tx-checksum-ip-generic: true
+                tx-checksumming: true
+                tx-nocache-copy: true
+                tx-scatter-gather: true
+                tx-tcp-ecn-segmentation: true
+                tx-tcp-segmentation: true
+                tx-tcp6-segmentation: true
+                udp-fragmentation-offload: true
+          interfaces:
+          - <% if_virt_common_0 %>
+          - <% if_virt_common_1 %>
+          mtu: 9216
+          name: bond0
+        - action: add-port
+          bridge: br-mgmt
+          mtu: 9216
+          name: bond0.<% vlan_common_mgmt %>
+        - action: add-port
+          bridge: br-san
+          mtu: 9216
+          name: bond0.<% vlan_common_san %>
+        - action: add-port
+          bridge: br-mesh
+          mtu: 9216
+          name: bond0.<% vlan_common_private %>
+        - action: add-port
+          bridge: br-ex
+          mtu: 9216
+          name: bond0.<% vlan_common_public %>
+        - action: add-port
+          bridge: br-storage
+          mtu: 9216
+          name: bond0.<% vlan_common_storage %>
+    nic_mapping:
+      default:
+        if_ceph_osd_admin: eno2
+        if_ceph_osd_common_0: ens4
+        if_ceph_osd_common_1: ens4d1
+        if_compute_admin: eth0
+        if_compute_common_0: eth4
+        if_compute_common_1: eth5
+        if_mongo_admin: eth0
+        if_mongo_mgmt: eth3
+        if_monitoring_admin: eth0
+        if_monitoring_mgmt: eth3
+        if_small_controller_admin: eth0
+        if_small_controller_mgmt: eth3
+        if_small_controller_private: eth4
+        if_small_controller_public: eth1
+        if_small_controller_san: eth5
+        if_storage_controller_admin: eth0
+        if_storage_controller_mgmt: eth3
+        if_storage_controller_san: eth5
+        if_storage_controller_storage: eth2
+        if_virt_admin: ens1f1
+        if_virt_common_0: ens3
+        if_virt_common_1: ens3d1
+        vlan_common_mgmt: 113
+        vlan_common_private: 114
+        vlan_common_public: 111
+        vlan_common_san: 115
+        vlan_common_storage: 112
+    templates_for_node_role:
+      base-os:
+      - template-small-controller
+      ceph-mon:
+      - template-storage-controller
+      ceph-osd:
+      - template-ceph-osd
+      compute:
+      - template-compute
+      controller:
+      - template-small-controller
+      elasticsearch_kibana:
+      - template-monitoring
+      influxdb_grafana:
+      - template-monitoring
+      infrastructure_alerting:
+      - template-monitoring
+      mongo:
+      - template-mongo
+      primary-controller:
+      - template-small-controller
+      primary-elasticsearch_kibana:
+      - template-monitoring
+      primary-influxdb_grafana:
+      - template-monitoring
+      primary-infrastructure_alerting:
+      - template-monitoring
+      primary-mongo:
+      - template-mongo
+      virt:
+      - template-virt
