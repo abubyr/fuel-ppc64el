@@ -1,0 +1,28 @@
+# This patch explicitly adds arch to repository description.
+# It prevents fuel agent from apt-get update fails,
+# when for specified URI there is no repo metadata for some arch/
+# With explicitly specified arch apt ignores 'foreign arch' repos.
+# Arch 'amd64' is used by default.
+# If repo name contains pattern 'ppc64el' this arch will be added instead.
+--- a/usr/lib/python2.7/site-packages/fuel_agent/utils/build.py    2016-11-11 14:06:57.298710326 +0000
++++ b/usr/lib/python2.7/site-packages/fuel_agent/utils/build.py    2016-11-11 14:20:52.792328492 +0000
+@@ -418,11 +418,17 @@
+ def add_apt_source(name, uri, suite, section, chroot):
+     # NOTE(agordeev): The files have either no or "list" as filename extension
+     filename = 'fuel-image-{name}.list'.format(name=strip_filename(name))
++
++    if 'ppc64el' in name:
++      arch = 'ppc64el'
++    else:
++      arch = 'amd64'
++
+     if section:
+-        entry = 'deb {uri} {suite} {section}\n'.format(uri=uri, suite=suite,
++        entry = 'deb [arch={arch}] {uri} {suite} {section}\n'.format(arch=arch, uri=uri, suite=suite,
+                                                        section=section)
+     else:
+-        entry = 'deb {uri} {suite}\n'.format(uri=uri, suite=suite)
++        entry = 'deb [arch={arch}] {uri} {suite}\n'.format(arch=arch, uri=uri, suite=suite)
+     with open(os.path.join(chroot, DEFAULT_APT_PATH['sources_dir'], filename),
+               'w') as f:
+         f.write(entry)
