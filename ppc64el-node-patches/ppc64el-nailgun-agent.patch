@@ -1,0 +1,48 @@
+--- a/usr/bin/nailgun-agent   2016-10-24 13:24:27.014110175 +0300
++++ b/usr/bin/nailgun-agent   2016-10-24 13:22:08.054108355 +0300
+@@ -387,7 +387,7 @@
+         :spec => [],
+       },
+       :disks => [],
+-      :memory => (_dmi_memory or _ohai_memory),
++      :memory => _ohai_memory,
+       :pci_devices => _get_pci_dev_list,
+       :numa_topology => @numa_topology,
+     }
+@@ -495,7 +495,8 @@
+           end
+           detailed_meta[:cpu][:spec] << {
+             :frequency => frequency,
+-            :model => (cpuinfo[:model_name].gsub(/ +/, " ") rescue nil)
++            #:model => (cpuinfo[:model_name].gsub(/ +/, " ") rescue nil)
++            :model => "8247-22L"
+           }
+         end
+       end
+@@ -1048,8 +1049,8 @@
+   end
+ 
+   def supported_hugepages
+-    return [2048, 1048576] if @os[:cpu]['0']['flags'].include?('pdpe1gb')
+-    return [2048] if @os[:cpu]['0']['flags'].include?('pse')
++    #return [2048, 1048576] if @os[:cpu]['0']['flags'].include?('pdpe1gb')
++    #return [2048] if @os[:cpu]['0']['flags'].include?('pse')
+     []
+   end
+ 
+@@ -1106,7 +1107,14 @@
+ end
+ 
+ def provisioned?
+-  Socket.gethostname != 'bootstrap'
++  #Socket.gethostname != 'bootstrap'
++  if File.exist?("/etc/nailgun_systemtype")
++      fl = File.open("/etc/nailgun_systemtype", "r")
++      system_type = fl.readline.rstrip
++      system_type != "bootstrap"
++  else
++      false
++  end
+ end
+ 
+ logger = Logger.new(STDOUT)
