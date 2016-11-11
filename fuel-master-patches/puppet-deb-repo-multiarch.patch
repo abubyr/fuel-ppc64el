@@ -1,0 +1,14 @@
+--- a/etc/puppet/modules/osnailyfacter/lib/puppet/parser/functions/generate_apt_sources.rb   2016-11-04 14:13:16.520719215 +0000
++++ b/etc/puppet/modules/osnailyfacter/lib/puppet/parser/functions/generate_apt_sources.rb   2016-11-04 14:10:59.616836978 +0000
+@@ -16,10 +16,12 @@
+     result = {}
+ 
+     repositories.each do |repo|
++      arch = if repo['name'].include? 'ppc64el' then 'ppc64el' else 'amd64' end
+       result.store repo['name'], {
+         'repos'    => repo['section'],
+         'release'  => repo['suite'],
+         'location' => repo['uri'],
++        'architecture' => arch,
+       }
+     end
