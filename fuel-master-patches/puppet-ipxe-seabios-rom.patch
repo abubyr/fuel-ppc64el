@@ -1,0 +1,13 @@
+--- a/etc/puppet/mitaka-9.0/modules/openstack_tasks/manifests/roles/compute.pp        2016-10-03 14:07:58.000000000 +0000
++++ b/etc/puppet/mitaka-9.0/modules/openstack_tasks/manifests/roles/compute.pp        2016-11-28 18:56:43.988362913 +0000
+@@ -204,7 +204,9 @@
+       package {$guestmount_package_name: ensure => present}
+     }
+     'Debian': {
+-
++      if $::architecture == 'ppc64le' {
++        ensure_packages(['ipxe-qemu', 'seabios'], {'ensure' => 'latest'})
++      }
+       # From legacy params
+       $libvirt_type_kvm             = 'qemu-kvm'
+       $guestmount_package_name      = 'guestmount'
