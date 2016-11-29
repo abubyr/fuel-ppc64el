@@ -519,7 +519,7 @@ adv_net_template:
         if_ceph_osd_common_1: ens4d1
         if_compute_admin: eth0
         if_compute_common_0: eth4
-        if_compute_common_1: eth5
+        if_compute_common_1: eth6
         if_mongo_admin: eth0
         if_mongo_mgmt: eth3
         if_monitoring_admin: eth0
