@@ -1,0 +1,17 @@
+--- a/usr/lib/python2.7/site-packages/fuel_health/nmanager.py    2016-12-02 18:16:02.317176824 +0000
++++ b/usr/lib/python2.7/site-packages/fuel_health/nmanager.py    2016-12-02 19:45:31.122975657 +0000
+@@ -396,11 +396,11 @@
+     @classmethod
+     def find_micro_flavor(cls):
+         return [flavor for flavor in cls.compute_client.flavors.list()
+-                if flavor.name == 'm1.micro']
++                if flavor.name == 'm1.small']
+
+     def _create_volume(self, client, expected_state=None, **kwargs):
+         kwargs.setdefault('name', rand_name('ostf-test-volume'))
+-        kwargs.setdefault('size', 1)
++        kwargs.setdefault('size', 3)
+         volume = client.volumes.create(**kwargs)
+         self.set_resource(kwargs['name'], volume)
+         if expected_state:
+
