@@ -1,0 +1,13 @@
+--- a/sahara/plugins/ambari/deploy.py   2017-01-11 14:38:55.524833874 +0000
++++ b/sahara/plugins/ambari/deploy.py   2017-01-11 14:40:55.252835244 +0000
+@@ -38,6 +38,10 @@
+     "2.3": {
+         "HDP": "HDP-2.3",
+         "HDP-UTILS": "HDP-UTILS-1.1.0.20"
++    },
++    "2.5": {
++        "HDP": "HDP-2.5",
++        "HDP-UTILS": "HDP-UTILS-1.1.0.21"
+     }
+ }
+

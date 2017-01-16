@@ -1,0 +1,28 @@
+--- a/sahara/service/volumes.py
++++ b/sahara/service/volumes.py
+@@ -143,13 +143,18 @@ def _find_instance_devices(instance):
+             "mount | awk '$1 ~ /^\/dev/ {print $1}'")
+         mounted_dev = mounted_info.split()
+ 
+-    # filtering attached devices, that should not be mounted
+-    for dev in attached_dev[:]:
+-        idx = re.sub("\D", "", dev)
+-        if idx:
+-            if dev in mounted_dev:
+-                attached_dev.remove(re.sub("\d", "", dev))
+-                attached_dev.remove(dev)
++        # filtering attached devices, that should not be mounted
++        for dev in attached_dev[:]:
++            idx = re.sub("\D", "", dev)
++            if idx:
++                # Check partition type. If it is '41', e.g. IBM PReP, skip it
++                code, partition_type = r.execute_command(
++                        "sudo sfdisk -c \"%s\" %s" % (re.sub(idx, "", dev), idx))
++                if dev in mounted_dev or '41' in partition_type:
++                    main_dev = re.sub("\d", "", dev)
++                    if main_dev in attached_dev:
++                        attached_dev.remove(main_dev)
++                    attached_dev.remove(dev)
+ 
+     for dev in attached_dev[:]:
+         if re.sub("\D", "", dev):

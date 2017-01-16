@@ -1,0 +1,19 @@
+--- a/elements/ambari/pre-install.d/90-ambari-repo-conf
++++ b/elements/ambari/pre-install.d/90-ambari-repo-conf
+@@ -6,14 +6,14 @@ fi
+ set -eu
+ set -o pipefail
+ 
+-DIB_AMBARI_VERSION="${DIB_AMBARI_VERSION:-2.4.2.0}"
++DIB_AMBARI_VERSION="${DIB_AMBARI_VERSION:-2.4.2.4-3}"
+ 
+ case "${DISTRO_NAME}" in
+     rhel | centos )
+         wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/$DIB_AMBARI_VERSION/ambari.repo -O /etc/yum.repos.d/ambari.repo
+     ;;
+     rhel7 | centos7 )
+-        wget http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/$DIB_AMBARI_VERSION/ambari.repo -O /etc/yum.repos.d/ambari.repo
++        wget http://private-repo-1.hortonworks.com/ambari/centos7/2.x/updates/$DIB_AMBARI_VERSION/ambari.repo -O /etc/yum.repos.d/ambari.repo
+     ;;
+     ubuntu )
+         wget http://public-repo-1.hortonworks.com/ambari/ubuntu14/2.x/updates/$DIB_AMBARI_VERSION/ambari.list -O /etc/apt/sources.list.d/ambari.list

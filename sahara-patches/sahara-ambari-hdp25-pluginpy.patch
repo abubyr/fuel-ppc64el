@@ -1,0 +1,11 @@
+--- a/sahara/plugins/ambari/plugin.py   2017-01-11 14:38:55.532833874 +0000
++++ b/sahara/plugins/ambari/plugin.py   2017-01-11 14:41:15.716835462 +0000
+@@ -40,7 +40,7 @@
+         return _("HDP plugin with Ambari")
+ 
+     def get_versions(self):
+-        return ["2.3"]
++        return ["2.3", "2.5"]
+ 
+     def get_node_processes(self, hadoop_version):
+         return {

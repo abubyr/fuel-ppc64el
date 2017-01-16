@@ -1,0 +1,12 @@
+--- a/.tox/venv/share/diskimage-builder/elements/rpm-distro/pre-install.d/01-override-yum-arch 2017-01-10 18:24:09.322083000 +0000
++++ b/.tox/venv/share/diskimage-builder/elements/rpm-distro/pre-install.d/01-override-yum-arch 2017-01-10 17:24:09.958650455 +0000
+@@ -18,6 +18,9 @@
+ elif [[ "$ARCH" = "ppc64el" ]]; then
+     basearch=ppc64el
+     arch=ppc64el
++elif [[ "$ARCH" = "ppc64le" ]]; then
++    basearch=ppc64le
++    arch=ppc64le
+ elif [[ "$ARCH" = "aarch64" ]]; then
+     basearch=aarch64
+     arch=aarch64

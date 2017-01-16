@@ -1,0 +1,11 @@
+--- a/.tox/venv/share/diskimage-builder/elements/bootloader/finalise.d/50-bootloader  2017-01-10 18:24:09.318083000 +0000
++++ b/.tox/venv/share/diskimage-builder/elements/bootloader/finalise.d/50-bootloader  2017-01-10 17:58:32.559079654 +0000
+@@ -59,7 +59,7 @@
+     if [ -f "/tmp/grub/install" ] ; then
+         source /tmp/grub/install
+     elif [[ "$ARCH" =~ "ppc" ]]; then
+-        install-packages grub-ieee1275
++        install-packages -m bootloader grub-ieee1275
+     else
+         install-packages -m bootloader grub-pc
+     fi

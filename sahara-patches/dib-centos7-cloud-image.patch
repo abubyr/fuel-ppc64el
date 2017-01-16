@@ -1,0 +1,15 @@
+--- a/.tox/venv/share/diskimage-builder/elements/centos7/root.d/10-centos7-cloud-image 2017-01-10 17:13:00.598936865 +0000
++++ b/.tox/venv/share/diskimage-builder/elements/centos7/root.d/10-centos7-cloud-image 2017-01-10 18:24:09.322083000 +0000
+@@ -11,9 +11,9 @@
+ 
+ if [[ "amd64 x86_64" =~ "$ARCH" ]]; then
+     ARCH="x86_64"
+-else
+-    echo 'centos7 root element only support the x86_64 $ARCH value.'
+-    exit 1
++#else
++#    echo 'centos7 root element only support the x86_64 $ARCH value.'
++#    exit 1
+ fi
+ 
+ DIB_LOCAL_IMAGE=${DIB_LOCAL_IMAGE:-}
